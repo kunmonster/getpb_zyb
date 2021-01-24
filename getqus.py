@@ -4,7 +4,7 @@ import time
 import random
 #导入延时模块&随机数模块=>为发送请求随机延时
 
-#得到参数（调用其他几个js文件）
+#得到参数（调用sign.js文件）
 def get_js():
   f = open("./sign.js",'r',encoding='UTF-8')
   line = f.readline()  
@@ -25,8 +25,11 @@ ts = allpar["ts"]
 import requests
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+#由于关闭了证书查询所以会出现报错加上这个就不会报错
 
 url = 'https://wenda.zuoyebang.com/commitui/firstcheck/getchecklist'
+#请求地址
+
 headers={
 'Host':'wenda.zuoyebang.com',
 'Connection':'keep-alive',
@@ -39,20 +42,27 @@ headers={
 'Accept-Language':'en-us,en'
 }
 
+
 body={
   "businessId":businessId,
   "ts":ts,
   "sign":sign,
-  "token":"486c41b5da3f1505a51652a58aa8d7985de2d717"
+  "token":""         
+  #由于还没找到获得token的接口，目前token只能通过获取request来获取，获取到过后输入到这里即可
 }
+
 result=''
 while(result!='success'):
-  if(result == "操作过快,请稍后重试"):
+  if(result == "操作过快,请稍后重试"):  
+      #如果出现操作过快，请稍后重试的提示此时需要等待一定时间，至少30秒
       time.sleep(45)
   else:
     time.sleep(random.random()*10*random.random())
+    #随机延时
   r = requests.post(url,data=body,headers=headers,verify=False)
+  #POST发送请求
   result = r.json()['errStr']
+  #将获取内容以json格式存储，并获取状态
   print(result)
- 
-  
+  #显示当前抢题的状态目前有三种["success","一审领取失败","操作过快，请稍后重试"]
+  #若resul==success 那么即为抢题成功！
