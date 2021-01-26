@@ -24,6 +24,7 @@ ts = allpar["ts"]
 #导入请求访问的库进行POST提交
 import requests
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 #由于关闭了证书查询所以会出现报错加上这个就不会报错
 
@@ -47,15 +48,18 @@ body={
   "businessId":businessId,
   "ts":ts,
   "sign":sign,
-  "token":""         
+  "token":"486c41b5da3f1505a51652a58aa8d7985de2d717"         
   #由于还没找到获得token的接口，目前token只能通过获取request来获取，获取到过后输入到这里即可
 }
 
-result=''
+result = ''
+
 while(result!='success'):
   if(result == "操作过快,请稍后重试"):  
       #如果出现操作过快，请稍后重试的提示此时需要等待一定时间，至少30秒
-      time.sleep(45)
+      time.sleep(50)
+  elif(result=="有未完成待审核"):
+    break
   else:
     time.sleep(random.random()*10*random.random())
     #随机延时
@@ -65,4 +69,4 @@ while(result!='success'):
   #将获取内容以json格式存储，并获取状态
   print(result)
   #显示当前抢题的状态目前有三种["success","一审领取失败","操作过快，请稍后重试"]
-  #若resul==success 那么即为抢题成功！
+  #若result==success 那么即为抢题成功！
